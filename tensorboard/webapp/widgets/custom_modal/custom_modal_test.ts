@@ -15,6 +15,7 @@ limitations under the License.
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {CustomModalComponent} from './custom_modal_component';
+import {CustomModal} from './custom_modal';
 import {CommonModule} from '@angular/common';
 import {
   ApplicationRef,
@@ -22,6 +23,7 @@ import {
   ElementRef,
   EventEmitter,
   Output,
+  TemplateRef,
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
@@ -73,11 +75,30 @@ class TestableComponent {
 
 @Component({
   selector: 'fake-modal-view-container',
-  template: `<div #modal_container></div>`,
+  template: `
+    <div #modal_container></div>
+    <ng-template #modalTemplate>
+      <custom-modal
+      (onOpen)="onOpenSpy()"
+      >
+        <div class="content">abc123</div>
+      </custom-modal>
+    </ng-template>
+  `,
 })
 class FakeViewContainerComponent {
   @ViewChild('modal_container', {read: ViewContainerRef})
   readonly modalViewContainerRef!: ViewContainerRef;
+
+  @ViewChild('modalTemplate', {read: TemplateRef})
+  readonly modalTemplateRef!: TemplateRef<unknown>;
+
+  @ViewChild(CustomModalComponent)
+  readonly customModalComponent!: CustomModalComponent;
+
+  readonly onOpenSpy = jasmine.createSpy('onOpenSpy');
+
+  constructor(readonly customModal: CustomModal) {}
 }
 
 function createComponent(): ComponentFixture<TestableComponent> {
@@ -88,7 +109,63 @@ function createComponent(): ComponentFixture<TestableComponent> {
   return fixture;
 }
 
-fdescribe('custom modal', () => {
+fdescribe('custom modal service', () => {
+  let fixture: ComponentFixture<FakeViewContainerComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [FakeViewContainerComponent, CustomModalComponent],
+      imports: [CommonModule],
+    }).compileComponents();
+
+    const appRef = TestBed.inject(ApplicationRef);
+    fixture = TestBed.createComponent(FakeViewContainerComponent);
+    appRef.components.push(fixture.componentRef);
+    fixture.detectChanges();
+  });
+
+  it('creates a modal', async () => {
+    const component = fixture.componentInstance;
+
+    component.customModal.createAtPosition(component.modalTemplateRef, {
+      x: 10,
+      y: 20
+    });
+    fixture.detectChanges();
+
+    const content = fixture.debugElement.query(By.css('.content'));
+    expect(content.nativeElement.innerHTML).toContain('abc123');
+    expect(content.nativeElement.style.left).toEqual('10px');
+    expect(content.nativeElement.style.top).toEqual('20px');
+  });
+
+  it('does not emit onOpen immediately', async () => {
+    const component = fixture.componentInstance;
+
+    component.customModal.createAtPosition(component.modalTemplateRef, {
+      x: 10,
+      y: 20
+    });
+    fixture.detectChanges();
+
+    expect(component.onOpenSpy).not.toHaveBeenCalled();
+  });
+
+  it('emits onOpen on next animation frame', async () => {
+    const component = fixture.componentInstance;
+
+    component.customModal.createAtPosition(component.modalTemplateRef, {
+      x: 10,
+      y: 20
+    });
+    fixture.detectChanges();
+    await waitFrame();
+
+    expect(component.onOpenSpy).toHaveBeenCalled();
+  });
+});
+
+describe('custom modal', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [TestableComponent, CustomModalComponent],
@@ -106,24 +183,6 @@ fdescribe('custom modal', () => {
     fixture.detectChanges();
     await waitFrame();
     expect(fixture.componentInstance.isOpen).toBeFalse();
-  });
-
-  describe('openAtPosition', () => {
-    it('applies top and left offsets', () => {
-      const fixture = createComponent();
-      fixture.componentInstance.openAtPosition({x: 20, y: 10});
-      expect(fixture.componentInstance.getContentStyle().top).toEqual('10px');
-      expect(fixture.componentInstance.getContentStyle().left).toEqual('20px');
-    });
-
-    it('emits onOpen', async () => {
-      const fixture = createComponent();
-      const spy = spyOn(fixture.componentInstance.onOpen, 'emit');
-      fixture.componentInstance.openAtPosition({x: 20, y: 10});
-      expect(spy).not.toHaveBeenCalled();
-      await waitFrame();
-      expect(spy).toHaveBeenCalled();
-    });
   });
 
   describe('closing behavior', () => {
