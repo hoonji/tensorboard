@@ -34,7 +34,7 @@ import {
   template: `
     <button
       *ngIf="(width$ | async) === 0"
-      class="expand"
+      class="expand-collapsed-sidebar"
       (click)="expandSidebar()"
     >
       <mat-icon svgIcon="expand_more_24px"></mat-icon>

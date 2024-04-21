@@ -28,11 +28,30 @@ limitations under the License.
 }
 
 .resizer,
-.expand {
+.expand-collapsed-sidebar {
   @include tb-theme-foreground-prop(border-color, border);
   box-sizing: border-box;
   flex: 0 0;
   justify-self: stretch;
+}
+
+.expand-collapsed-sidebar {
+  width: 20px;
+  align-items: center;
+  background: transparent;
+  border-style: solid;
+  border-width: 0 1px 0 0;
+  color: inherit;
+  contain: content;
+  cursor: pointer;
+  display: flex;
+  justify-self: stretch;
+  padding: 0;
+
+  mat-icon {
+    transform: rotate(-90deg);
+    transform-origin: center;
+  }
 }
 
 .resizer {
