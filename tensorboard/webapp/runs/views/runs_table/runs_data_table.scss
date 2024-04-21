@@ -15,15 +15,11 @@ limitations under the License.
 @use '@angular/material' as mat;
 @import 'tensorboard/webapp/theme/tb_theme';
 $_circle-size: 20px;
-$_arrow_size: 16px;
+$_table_cell_padding: 4px;
+$_add_button_size: 25px;
 
 :host {
-  width: 100%;
-}
-
-:host {
-  overflow-y: auto;
-  width: 100%;
+  min-width: 100%;
 }
 
 .color-container {
@@ -46,6 +42,10 @@ $_arrow_size: 16px;
   width: 100%;
 }
 
+:host ::ng-deep tb-data-table .data-table {
+  @include tb-theme-foreground-prop(border-top, border, 1px solid);
+}
+
 tb-data-table-content-row,
 tb-data-table-header-cell {
   // Match the size of the touch targets for the checkbox.
@@ -54,17 +54,21 @@ tb-data-table-header-cell {
 
 tb-data-table-content-cell,
 tb-data-table-header-cell {
-  padding: 0 4px;
+  padding: 0 $_table_cell_padding;
   vertical-align: middle;
   @include tb-theme-foreground-prop(border-bottom, border, 1px solid);
 
-  &:last-child {
-    @include tb-theme-foreground-prop(border-right, border, 1px solid);
+  &.table-column-add_button {
+    @include tb-theme-foreground-prop(border-bottom, border, 0);
   }
 }
 
-tb-data-table-header-cell:last-of-type {
-  @include tb-theme-foreground-prop(border-right, border, 1px solid);
+.table-column-color {
+  background-color: mat.get-color-from-palette($tb-background, background);
+  @include tb-dark-theme {
+    background-color: map-get($tb-dark-background, background);
+  }
+  @include tb-theme-foreground-prop(border-left, border, 1px solid);
 }
 
 .table-column-selected,
@@ -72,49 +76,26 @@ tb-data-table-header-cell:last-of-type {
   width: 40px;
 }
 
-.full-screen-toggle {
-  opacity: 0;
-  position: absolute;
-  height: 100%;
-  // Ensure the button is on the right side then add 2px for the drag target.
-  left: calc(100% + 2px);
-  top: 0;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-
-  &:hover {
-    opacity: 0.8;
+.table-column-add_button {
+  width: $_add_button_size;
+  position: sticky;
+  // Prevent headers peeking through the space on the right.
+  right: -1px;
+  background-color: mat.get-color-from-palette($tb-background, background);
+  @include tb-dark-theme {
+    background-color: map-get($tb-dark-background, background);
   }
+  @include tb-theme-foreground-prop(border-left, border, 1px solid);
 
-  &.full-screen {
-    left: unset;
-    right: 0;
-  }
-
-  .full-screen-btn {
-    background-color: gray;
-    padding: 0;
-    min-width: $_arrow_size;
-    width: $_arrow_size;
-
-    &.expand {
-      border-radius: 0 $_arrow_size $_arrow_size 0;
-    }
-
-    &.collapse {
-      border-radius: $_arrow_size 0 0 $_arrow_size;
-    }
-
-    .expand-collapse-icon {
-      font-size: $_arrow_size;
-      width: $_arrow_size;
-    }
+  .add-column-btn {
+    // Use !important to override very high icon specificities.
+    width: $_add_button_size !important;
+    height: $_add_button_size !important;
+    padding: 0 !important;
   }
 }
 
 .filter-row {
-  @include tb-theme-foreground-prop(border-bottom, border, 1px solid);
   display: flex;
   align-items: center;
   height: 48px;
@@ -124,7 +105,4 @@ tb-data-table-header-cell:last-of-type {
     padding-left: 16px;
     flex-grow: 1;
   }
-}
-.table-container {
-  overflow-x: auto;
 }

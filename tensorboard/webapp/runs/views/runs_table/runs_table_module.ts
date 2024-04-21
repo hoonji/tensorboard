@@ -45,6 +45,7 @@ import {RunsGroupMenuButtonComponent} from './runs_group_menu_button_component';
 import {RunsGroupMenuButtonContainer} from './runs_group_menu_button_container';
 import {RunsDataTable} from './runs_data_table';
 import {RunsTableContainer} from './runs_table_container';
+import {ColumnSelectorModule} from '../../../widgets/data_table/column_selector_module';
 
 @NgModule({
   imports: [
@@ -68,6 +69,7 @@ import {RunsTableContainer} from './runs_table_container';
     MatTableModule,
     RangeInputModule,
     AlertModule,
+    ColumnSelectorModule,
   ],
   exports: [RunsTableContainer],
   declarations: [

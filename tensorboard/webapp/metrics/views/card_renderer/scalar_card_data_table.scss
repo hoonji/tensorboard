@@ -12,6 +12,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
+@use '@angular/material' as mat;
+@import 'tensorboard/webapp/theme/tb_theme';
+
 $_circle-size: 12px;
 
 tb-data-table-content-cell,
@@ -30,4 +33,24 @@ tb-data-table-header-cell {
   height: $_circle-size - 2px; // size minus border
   width: $_circle-size - 2px; // size minus border
   vertical-align: middle;
+}
+
+.table-column-add_button {
+  $_add_button_size: 25px;
+
+  width: $_add_button_size;
+  position: sticky;
+  // Prevent headers peeking through the space on the right.
+  right: -1px;
+  background-color: mat.get-color-from-palette($tb-background, background);
+  @include tb-dark-theme {
+    background-color: map-get($tb-dark-background, background);
+  }
+
+  .add-column-btn {
+    // Use !important to override very high icon specificities.
+    width: $_add_button_size !important;
+    height: $_add_button_size !important;
+    padding: 0 !important;
+  }
 }

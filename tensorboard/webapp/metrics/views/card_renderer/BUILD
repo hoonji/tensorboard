@@ -269,6 +269,10 @@ tf_sass_binary(
 tf_sass_binary(
     name = "scalar_card_data_table_styles",
     src = "scalar_card_data_table.scss",
+    deps = [
+        "//tensorboard/webapp:angular_material_sass_deps",
+        "//tensorboard/webapp/theme",
+    ],
 )
 
 tf_ng_module(
@@ -284,11 +288,15 @@ tf_ng_module(
     deps = [
         ":scalar_card_types",
         ":utils",
+        "//tensorboard/webapp/angular:expect_angular_material_button",
+        "//tensorboard/webapp/angular:expect_angular_material_icon",
         "//tensorboard/webapp/metrics:types",
         "//tensorboard/webapp/runs:types",
         "//tensorboard/webapp/util:memoize",
         "//tensorboard/webapp/widgets/card_fob:types",
+        "//tensorboard/webapp/widgets/custom_modal",
         "//tensorboard/webapp/widgets/data_table",
+        "//tensorboard/webapp/widgets/data_table:column_selector",
         "//tensorboard/webapp/widgets/data_table:types",
         "//tensorboard/webapp/widgets/line_chart_v2/sub_view",
         "@npm//@angular/common",

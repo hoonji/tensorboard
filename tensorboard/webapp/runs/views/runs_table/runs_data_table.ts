@@ -18,6 +18,9 @@ import {
   EventEmitter,
   Input,
   Output,
+  TemplateRef,
+  ViewChild,
+  ViewContainerRef,
 } from '@angular/core';
 import {
   ColumnHeader,
@@ -31,6 +34,7 @@ import {
   AddColumnEvent,
 } from '../../../widgets/data_table/types';
 import {memoize} from '../../../util/memoize';
+import {CustomModal} from '../../../widgets/custom_modal/custom_modal';
 @Component({
   selector: 'runs-data-table',
   templateUrl: 'runs_data_table.ng.html',
@@ -43,7 +47,6 @@ export class RunsDataTable {
   @Input() sortingInfo!: SortingInfo;
   @Input() experimentIds!: string[];
   @Input() regexFilter!: string;
-  @Input() isFullScreen!: boolean;
   @Input() selectableColumns!: ColumnHeader[];
   @Input() numColumnsLoaded!: number;
   @Input() numColumnsToLoad!: number;
@@ -57,7 +60,6 @@ export class RunsDataTable {
   @Output() onSelectionToggle = new EventEmitter<string>();
   @Output() onAllSelectionToggle = new EventEmitter<string[]>();
   @Output() onRegexFilterChange = new EventEmitter<string>();
-  @Output() toggleFullScreen = new EventEmitter();
   @Output() onRunColorChange = new EventEmitter<{
     runId: string;
     newColor: string;
@@ -67,6 +69,9 @@ export class RunsDataTable {
   @Output() onSelectionDblClick = new EventEmitter<string>();
   @Output() addFilter = new EventEmitter<FilterAddedEvent>();
   @Output() loadAllColumns = new EventEmitter<null>();
+
+  @ViewChild('columnSelectorModalTemplate', {read: TemplateRef})
+  columnSelectorModalTemplate!: TemplateRef<unknown>;
 
   // Columns must be memoized to stop needless re-rendering of the content and headers in these
   // columns. This has been known to cause problems with the controls in these columns,
@@ -94,6 +99,18 @@ export class RunsDataTable {
       ]
     );
   }
+
+  addButtonColumn = {
+    name: 'add_button',
+    displayName: '',
+    type: ColumnHeaderType.ADD_BUTTON,
+    enabled: true,
+  };
+
+  constructor(
+    private readonly customModal: CustomModal,
+    private readonly viewContainerRef: ViewContainerRef
+  ) {}
 
   selectionClick(event: MouseEvent, runId: string) {
     // Prevent checkbox from switching checked state on its own.
@@ -127,6 +144,20 @@ export class RunsDataTable {
   onFilterKeyUp(event: KeyboardEvent) {
     const input = event.target! as HTMLInputElement;
     this.onRegexFilterChange.emit(input.value);
+  }
+
+  openColumnSelector({event}: {event: MouseEvent}) {
+    this.customModal.createNextToElement(
+      this.columnSelectorModalTemplate,
+      event.target as HTMLElement,
+      this.viewContainerRef
+    );
+  }
+
+  onColumnAdded(header: ColumnHeader) {
+    this.addColumn.emit({
+      column: header,
+    });
   }
 
   /**

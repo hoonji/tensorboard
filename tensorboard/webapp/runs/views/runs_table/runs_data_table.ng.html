@@ -61,6 +61,21 @@ limitations under the License.
               ></runs-group-menu-button>
             </span>
           </ng-container>
+        </tb-data-table-header-cell>
+        <tb-data-table-header-cell
+          *ngIf="selectableColumns && selectableColumns.length"
+          [header]="addButtonColumn"
+          [sortingInfo]="sortingInfo"
+          [ngClass]="['table-column-' + addButtonColumn.name]"
+        >
+          <button
+            mat-icon-button
+            class="add-column-btn"
+            (click)="openColumnSelector({event: $event})"
+            title="Add Column"
+          >
+            <mat-icon svgIcon="add_24px"></mat-icon>
+          </button>
         </tb-data-table-header-cell> </ng-container
     ></ng-container>
 
@@ -100,22 +115,26 @@ limitations under the License.
                 </span>
               </ng-container>
             </tb-data-table-content-cell>
+            <tb-data-table-content-cell
+              *ngIf="selectableColumns && selectableColumns.length"
+              [header]="addButtonColumn"
+              [datum]="dataRow[addButtonColumn.name]"
+              [ngClass]="['table-column-' + addButtonColumn.name]"
+            >
+            </tb-data-table-content-cell>
           </ng-container>
         </tb-data-table-content-row>
       </ng-container>
     </ng-container>
   </tb-data-table>
 </div>
-<div class="full-screen-toggle" [ngClass]="{'full-screen': isFullScreen}">
-  <button
-    mat-button
-    class="full-screen-btn"
-    [ngClass]="isFullScreen ? 'collapse' : 'expand'"
-    (click)="toggleFullScreen.emit()"
-  >
-    <mat-icon
-      class="expand-collapse-icon"
-      [svgIcon]="isFullScreen ? 'arrow_back_24px' : 'arrow_forward_24px'"
-    ></mat-icon>
-  </button>
-</div>
+
+<ng-template #columnSelectorModalTemplate>
+  <tb-data-table-column-selector-component
+    [selectableColumns]="selectableColumns"
+    [numColumnsLoaded]="numColumnsLoaded"
+    [hasMoreColumnsToLoad]="hasMoreColumnsToLoad"
+    (columnSelected)="onColumnAdded($event)"
+    (loadAllColumns)="loadAllColumns.emit()"
+  ></tb-data-table-column-selector-component>
+</ng-template>

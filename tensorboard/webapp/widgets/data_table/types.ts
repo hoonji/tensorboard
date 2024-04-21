@@ -41,6 +41,7 @@ export enum ColumnHeaderType {
   HPARAM = 'HPARAM',
   METRIC = 'METRIC',
   CUSTOM = 'CUSTOM',
+  ADD_BUTTON = 'ADD_BUTTON',
 }
 
 export enum DomainType {

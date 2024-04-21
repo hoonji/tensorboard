@@ -14,12 +14,21 @@ limitations under the License.
 ==============================================================================*/
 import {CommonModule} from '@angular/common';
 import {NgModule} from '@angular/core';
+import {MatButtonModule} from '@angular/material/button';
 import {ScalarCardDataTable} from './scalar_card_data_table';
 import {DataTableModule} from '../../../widgets/data_table/data_table_module';
+import {MatIconModule} from '@angular/material/icon';
+import {ColumnSelectorModule} from '../../../widgets/data_table/column_selector_module';
 
 @NgModule({
   declarations: [ScalarCardDataTable],
   exports: [ScalarCardDataTable],
-  imports: [CommonModule, DataTableModule],
+  imports: [
+    CommonModule,
+    DataTableModule,
+    MatIconModule,
+    MatButtonModule,
+    ColumnSelectorModule,
+  ],
 })
 export class ScalarCardDataTableModule {}

@@ -18,6 +18,9 @@ import {
   EventEmitter,
   Input,
   Output,
+  TemplateRef,
+  ViewChild,
+  ViewContainerRef,
 } from '@angular/core';
 import {TimeSelection} from '../../../widgets/card_fob/card_fob_types';
 import {findClosestIndex} from '../../../widgets/line_chart_v2/sub_view/line_chart_interactive_utils';
@@ -43,6 +46,7 @@ import {
   AddColumnEvent,
 } from '../../../widgets/data_table/types';
 import {isDatumVisible} from './utils';
+import {CustomModal} from '../../../widgets/custom_modal/custom_modal';
 import {memoize} from '../../../util/memoize';
 
 @Component({
@@ -72,6 +76,9 @@ export class ScalarCardDataTable {
   @Output() removeColumn = new EventEmitter<HeaderToggleInfo>();
   @Output() addFilter = new EventEmitter<FilterAddedEvent>();
   @Output() loadAllColumns = new EventEmitter<null>();
+
+  @ViewChild('columnSelectorModalTemplate', {read: TemplateRef})
+  columnSelectorModalTemplate!: TemplateRef<unknown>;
 
   ColumnHeaderType = ColumnHeaderType;
 
@@ -339,6 +346,20 @@ export class ScalarCardDataTable {
 
   onRemoveColumn(header: ColumnHeader) {
     this.removeColumn.emit({header, dataTableMode: this.getDataTableMode()});
+  }
+
+  openColumnSelector({event}: {event: MouseEvent}) {
+    this.customModal.createNextToElement(
+      this.columnSelectorModalTemplate,
+      event.target as HTMLElement,
+      this.viewContainerRef
+    );
+  }
+
+  onColumnAdded(header: ColumnHeader) {
+    this.addColumn.emit({
+      column: header,
+    });
   }
 }
 

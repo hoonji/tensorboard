@@ -54,8 +54,3 @@ $_accent: map-get(mat.get-color-config($tb-theme), accent);
   padding: 0 24px;
   justify-content: center;
 }
-
-.add-button-cell {
-  display: table-cell;
-  width: 40px;
-}

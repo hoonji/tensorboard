@@ -36,7 +36,23 @@ limitations under the License.
         [header]="header"
         [sortingInfo]="sortingInfo"
         [disableContextMenu]="!columnContextMenusEnabled"
-      ></tb-data-table-header-cell> </ng-container
+      ></tb-data-table-header-cell>
+      <tb-data-table-header-cell
+        *ngIf="header.type === ColumnHeaderType.ADD_BUTTON && selectableColumns && selectableColumns.length"
+        [header]="header"
+        [ngClass]="'table-column-' + header.name"
+      >
+        <ng-container>
+          <button
+            mat-icon-button
+            class="add-column-btn"
+            (click)="openColumnSelector({event: $event})"
+            title="Add Column"
+          >
+            <mat-icon svgIcon="add_24px"></mat-icon>
+          </button>
+        </ng-container>
+      </tb-data-table-header-cell> </ng-container
   ></ng-container>
 
   <ng-container content>
@@ -55,8 +71,25 @@ limitations under the License.
               <span [style.backgroundColor]="dataRow['color']"></span>
             </div>
           </tb-data-table-content-cell>
+          <tb-data-table-content-cell
+            *ngIf="header.type === ColumnHeaderType.ADD_BUTTON && selectableColumns && selectableColumns.length"
+            [header]="header"
+            [ngClass]="'table-column-' + header.name"
+          >
+            <span></span>
+          </tb-data-table-content-cell>
         </ng-container>
       </tb-data-table-content-row>
     </ng-container>
   </ng-container>
 </tb-data-table>
+
+<ng-template #columnSelectorModalTemplate>
+  <tb-data-table-column-selector-component
+    [selectableColumns]="selectableColumns"
+    [numColumnsLoaded]="numColumnsLoaded"
+    [hasMoreColumnsToLoad]="hasMoreColumnsToLoad"
+    (columnSelected)="onColumnAdded($event)"
+    (loadAllColumns)="loadAllColumns.emit()"
+  ></tb-data-table-column-selector-component>
+</ng-template>

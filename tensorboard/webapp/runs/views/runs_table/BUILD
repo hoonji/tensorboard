@@ -110,6 +110,7 @@ tf_ng_module(
         "//tensorboard/webapp/util:memoize",
         "//tensorboard/webapp/widgets/custom_modal",
         "//tensorboard/webapp/widgets/data_table",
+        "//tensorboard/webapp/widgets/data_table:column_selector",
         "//tensorboard/webapp/widgets/data_table:filter_dialog",
         "//tensorboard/webapp/widgets/data_table:types",
         "//tensorboard/webapp/widgets/experiment_alias",
